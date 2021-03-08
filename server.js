@@ -9,6 +9,7 @@ app.use(express.json());
 // cors를 적용해 주면 모든 브라우저에서 나에 서버대해 요청할 수 있다.
 app.use(cors());
 // 람다 함수 / 아래와 같은 경로로 함수가 .get 요청이 왔을 때  두 번째 익명 함수가 실행이 된다.
+// 상품 정보를 구할 때 (아래 로직)
 app.get("/products", (req, res) => {
   // 제품에 있는 모든 파일을 검색(findALL)할 수 없기 때문에 page nation 한정을 걸어둔다. (lmit: 10, where : {}, order: 정렬) 조건을 걸어 where 문도 가능하다.
   models.Product.findAll({
@@ -16,7 +17,7 @@ app.get("/products", (req, res) => {
     //where : {}
     order: [["createdAt", "DESC"]],
     // 상품 정보를 업데이트할 때는 description을 받지 않는다. 대신 ㅁ (62줄 아래로 이동)
-    attributes: ["id", "name", "price", "createdAt", "seller"],
+    attributes: ["id", "name", "price", "createdAt", "seller", "imageUrl"],
   })
     .then((result) => {
       console.log("PRODUCT : ", result);
