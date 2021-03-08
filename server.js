@@ -2,12 +2,25 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const models = require("./models");
+const multer = require("multer");
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads/");
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  }),
+});
 const port = 8080;
 
 // app.use는 어떤 app에 설정을 해준다. 그 떄 express.json() json으로 정보를 전달했 듯이 express에서도 json 형식으로 데이터 전송한다.
 app.use(express.json());
 // cors를 적용해 주면 모든 브라우저에서 나에 서버대해 요청할 수 있다.
 app.use(cors());
+// 서버에서는 해당 파일들을 보여줄 때 우리가 입력했던 경로와 다른 경로를 보여줘야 한다. 그 경로를 우리가 입력했던 대로 보여주는대로 한다.
+app.use("/uploads", express.static("uploads"));
 // 람다 함수 / 아래와 같은 경로로 함수가 .get 요청이 왔을 때  두 번째 익명 함수가 실행이 된다.
 // 상품 정보를 구할 때 (아래 로직)
 app.get("/products", (req, res) => {
@@ -75,6 +88,14 @@ app.get("/products/:id", (req, res) => {
       console.error(error);
       res.send("상품 조회에 에러가 발생했습니다.");
     });
+});
+
+app.post("/image", upload.single("image"), (req, res) => {
+  const file = req.file;
+  console.log(file);
+  res.send({
+    imageUrl: file.path,
+  });
 });
 
 app.listen(port, () => {
