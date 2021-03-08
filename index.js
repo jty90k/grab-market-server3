@@ -25,3 +25,6 @@ const server = http.createServer(function (req, res) {
 server.listen(port, hostname);
 
 console.log("grab market server on!");
+
+// npm install express (framework)
+// npm install cors (서버가 브라우저에게 요청을 허용하기 위해 cors를 사용한다.)
