@@ -21,6 +21,22 @@ app.use(express.json());
 app.use(cors());
 // 서버에서는 해당 파일들을 보여줄 때 우리가 입력했던 경로와 다른 경로를 보여줘야 한다. 그 경로를 우리가 입력했던 대로 보여주는대로 한다.
 app.use("/uploads", express.static("uploads"));
+
+app.get("/banners", (req, res) => {
+  models.Banner.findAll({
+    limit: 3,
+  })
+    .then((result) => {
+      res.send({
+        banners: result,
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("에러가 발생했습니다.");
+    });
+});
+
 // 람다 함수 / 아래와 같은 경로로 함수가 .get 요청이 왔을 때  두 번째 익명 함수가 실행이 된다.
 // 상품 정보를 구할 때 (아래 로직)
 app.get("/products", (req, res) => {
@@ -97,6 +113,30 @@ app.post("/image", upload.single("image"), (req, res) => {
   res.send({
     imageUrl: file.path,
   });
+});
+
+// 결제 로직
+app.post("/purchase/:id", (req, res) => {
+  const { id } = req.params;
+  models.Product.update(
+    {
+      soldout: 1,
+    },
+    {
+      where: {
+        id,
+      },
+    }
+  )
+    .then((result) => {
+      res.send({
+        result: true,
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("에러가 발생했습니다.");
+    });
 });
 
 app.listen(port, () => {
